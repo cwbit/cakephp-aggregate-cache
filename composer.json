@@ -1,0 +1,23 @@
+{
+	"name": "ingrimmm/cakephp-aggregate-cache",
+    "description" : "A Behavior plugin for CakePHP that extends the idea of counterCache and counterScope to more fields",
+    "license" : "WTFPL",
+    "type" : "cakephp-plugin",
+    "authors": [
+        {
+            "name":         "Ingrimmm",
+            "role":         "Maintainer"
+        },
+        {
+            "name":         "Vincent Lizzi",
+            "role":         "Original Author"
+        }
+    ],
+    "require" : {
+        },
+    "require-dev" : {
+    },
+    "extra": {
+    	"installer-name" : "AggregateCache"
+    }
+}
