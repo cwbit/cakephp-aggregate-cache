@@ -14,21 +14,21 @@ Add the plugin to your project's `composer.json` - something like this:
 
 	{
 		"require": {
-			"cwbit/cakephp-aggregate-cache": "master"
+			"cwbit/cakephp-aggregate-cache": "dev-master"
 		}
 	}
 
-Because this plugin has the type `cakephp-plugin` set in it's own `composer.json`, composer knows to install it inside your `/Plugins` directory, rather than in the usual vendors file. It is recommended that you add `/Plugins/Entity` to your .gitignore file. (Why? [read this](http://getcomposer.org/doc/faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md).)
+Because this plugin has the type `cakephp-plugin` set in it's own `composer.json` composer knows to install it inside your `/Plugins` directory (rather than in the usual 'Vendor' folder). It is recommended that you add `/Plugins/AggregateCache` to your cake app's .gitignore file. (Why? [read this](http://getcomposer.org/doc/faqs/should-i-commit-the-dependencies-in-my-vendor-directory.md).)
 
 _[Manual]_
 
 * Download and unzip the repo (see the download button somewhere on this git page)
-* Copy the resulting folder to `app/Plugin`
+* Copy the resulting folder into `app/Plugin`
 * Rename the folder you just copied to `AggregateCache`
 
 _[GIT Submodule]_
 
-In your app directory type:
+In your `app` directory type:
 
     git submodule add -b master git://github.com/cwbit/cakephp-aggregate-cache.git Plugin/AggregateCache
     git submodule init
@@ -36,7 +36,7 @@ In your app directory type:
 
 _[GIT Clone]_
 
-In your `Plugin` directory type:
+In your `app/Plugin` directory type:
 
     git clone -b master git://github.com/cwbit/cakephp-aggregate-cache.git AggregateCache
 
@@ -44,15 +44,15 @@ In your `Plugin` directory type:
 ### Enable plugin
 
 In 2.0 you need to enable the plugin your `app/Config/bootstrap.php` file:
-
+```
     CakePlugin::load('AggregateCache');
-
+```
 If you are already using `CakePlugin::loadAll();`, then this is not necessary.
 
 
 ## Usage
 
-The following was originally plagiarized from AggregateCache Behavior. Modifications to the original text will be made as the plugin progresses
+The following was originally plagiarized from AggregateCache Behavior on the bakery. Modifications to the original text will be made as the plugin progresses
 
 by vincentm8	 on August 23, 2010
 
