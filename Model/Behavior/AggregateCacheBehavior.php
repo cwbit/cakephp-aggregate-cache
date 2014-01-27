@@ -30,13 +30,13 @@
  * A field on which the aggregate values should be calculated. The field name may instead be given as a key in the configuration array.
  * A model that will store the cached aggregates. The model name must match the alias used for the model in the belongsTo array.
  * At least one aggregate function to calculate and the field in the related model that will store the calculated value.
- *    Aggregates available are: min, max, avg, sum. 
+ *    Aggregates available are: min, max, avg, sum, count 
  * A conditions array may be provided to filter the query used to calculate aggregates. 
  *    If not specified, the conditions of the belongsTo association will be used. 
  * A recursive value may be specified for the aggregate query. If not specified Cake's default will be used. 
  *    If it's not necessary to use conditions involving a related table, setting recursive to -1 will make the aggregate query more efficient.
  * 
- * @author Ingrimmm (original author Vincent Lizzi)
+ * @author CWBIT (original author Vincent Lizzi)
  * @version 2014-01-25 
  */ 
 class AggregateCacheBehavior extends ModelBehavior { 
@@ -45,7 +45,7 @@ class AggregateCacheBehavior extends ModelBehavior {
     var $config = array(); 
     var $functions = array('min', 'max', 'avg', 'sum', 'count'); 
 
-    function setup(&$model, $config = array()) { 
+    function setup(Model $model, $config = []) { 
         foreach ($config as $k => $aggregate) { 
             if (empty($aggregate['field'])) { 
                 $aggregate['field'] = $k; 
@@ -56,7 +56,7 @@ class AggregateCacheBehavior extends ModelBehavior {
         } 
     } 
 
-    function __updateCache(&$model, $aggregate, $foreignKey, $foreignId) { 
+    function __updateCache(Model $model, $aggregate, $foreignKey, $foreignId) { 
         $assocModel = & $model->{$aggregate['model']}; 
         $calculations = array(); 
         foreach ($aggregate as $function => $cacheField) { 
@@ -91,7 +91,7 @@ class AggregateCacheBehavior extends ModelBehavior {
         } 
     } 
 
-    function afterSave(&$model, $created) { 
+    function afterSave(Model $model, $created, $options = []) { 
         foreach ($this->config as $aggregate) { 
             if (!array_key_exists($aggregate['model'], $model->belongsTo)) { 
                 continue; 
@@ -102,14 +102,14 @@ class AggregateCacheBehavior extends ModelBehavior {
         } 
     } 
 
-    function beforeDelete(&$model) { 
+    function beforeDelete(Model $model, $cascade = true) { 
         foreach ($model->belongsTo as $assocKey => $assocData) { 
             $this->foreignTableIDs[$assocData['className']] = $model->field($assocData['foreignKey']); 
         } 
         return true; 
     } 
 
-    function afterDelete(&$model) { 
+    function afterDelete(Model $model) { 
         foreach ($this->config as $aggregate) { 
             if (!array_key_exists($aggregate['model'], $model->belongsTo)) { 
                 continue; 
