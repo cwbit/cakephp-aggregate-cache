@@ -83,8 +83,12 @@ class AggregateCacheBehavior extends ModelBehavior {
             foreach ($aggregate as $function => $cacheField) { 
                 if (!in_array($function, $this->functions)) { 
                     continue; 
-                } 
-                $newValues[$cacheField] = $results[0][$function . '_value']; 
+                }
+                if (empty($results)) {
+                    $newValues[$cacheField] = 0;
+                } else {
+                    $newValues[$cacheField] = $results[0][$function . '_value'];
+                }
             } 
             $assocModel->id = $foreignId; 
             $assocModel->save($newValues, false, array_keys($newValues)); 
