@@ -41,11 +41,11 @@
  */ 
 class AggregateCacheBehavior extends ModelBehavior { 
 
-    var $foreignTableIDs = array(); 
-    var $config = array(); 
-    var $functions = array('min', 'max', 'avg', 'sum', 'count'); 
+    public $foreignTableIDs = []; 
+    public $config = []; 
+    public $functions = ['min', 'max', 'avg', 'sum', 'count']; 
 
-    function setup(Model $model, $config = []) { 
+    public function setup(Model $model, $config = []) { 
         foreach ($config as $k => $aggregate) { 
             if (empty($aggregate['field'])) { 
                 $aggregate['field'] = $k; 
@@ -56,7 +56,7 @@ class AggregateCacheBehavior extends ModelBehavior {
         } 
     } 
 
-    function __updateCache(Model $model, $aggregate, $foreignKey, $foreignId) { 
+    public function __updateCache(Model $model, $aggregate, $foreignKey, $foreignId) { 
         $assocModel = & $model->{$aggregate['model']}; 
         $calculations = array(); 
         foreach ($aggregate as $function => $cacheField) { 
@@ -91,25 +91,30 @@ class AggregateCacheBehavior extends ModelBehavior {
         } 
     } 
 
-    function afterSave(Model $model, $created, $options = []) { 
+    public function afterSave(Model $model, $created, $options = []) {
+        # broad check to make sure $model->data has all the fields
+        # aggregation doesn't work if the foreignKey isn't in $model->data
+        if(array_diff_key($model->data[$model->alias], $model->schema()) !== []):
+            $model->read();
+        endif;
         foreach ($this->config as $aggregate) { 
             if (!array_key_exists($aggregate['model'], $model->belongsTo)) { 
                 continue; 
             } 
-            $foreignKey = $model->belongsTo[$aggregate['model']]['foreignKey']; 
+            $foreignKey = $model->belongsTo[$aggregate['model']]['foreignKey'];
             $foreignId = $model->data[$model->name][$foreignKey]; 
             $this->__updateCache($model, $aggregate, $foreignKey, $foreignId); 
         } 
     } 
 
-    function beforeDelete(Model $model, $cascade = true) { 
+    public function beforeDelete(Model $model, $cascade = true) { 
         foreach ($model->belongsTo as $assocKey => $assocData) { 
             $this->foreignTableIDs[$assocData['className']] = $model->field($assocData['foreignKey']); 
         } 
         return true; 
     } 
 
-    function afterDelete(Model $model) { 
+    public function afterDelete(Model $model) { 
         foreach ($this->config as $aggregate) { 
             if (!array_key_exists($aggregate['model'], $model->belongsTo)) { 
                 continue; 
