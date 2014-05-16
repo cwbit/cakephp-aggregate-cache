@@ -37,7 +37,6 @@
  *    If it's not necessary to use conditions involving a related table, setting recursive to -1 will make the aggregate query more efficient.
  * 
  * @author CWBIT (original author Vincent Lizzi)
- * @version 2014-01-25 
  */ 
 class AggregateCacheBehavior extends ModelBehavior { 
 
@@ -98,7 +97,7 @@ class AggregateCacheBehavior extends ModelBehavior {
     public function afterSave(Model $model, $created, $options = []) {
         # broad check to make sure $model->data has all the fields
         # aggregation doesn't work if the foreignKey isn't in $model->data
-        if(array_diff_key($model->data[$model->alias], $model->schema()) !== []):
+        if(array_diff_key($model->schema(),$model->data[$model->alias]) !== []):
             $model->read();
         endif;
         foreach ($this->config as $aggregate) { 
