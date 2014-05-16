@@ -62,10 +62,10 @@ class AggregateCacheBehavior extends ModelBehavior {
             if (!in_array($function, $this->functions)) { 
                 continue; 
             } 
-            $calculations[] = $function . '(' . $model->name . '.' . $aggregate['field'] . ') ' . $function . '_value'; 
+            $calculations[] = $function . '(' . $model->alias . '.' . $aggregate['field'] . ') ' . $function . '_value'; 
         } 
         if (count($calculations) > 0) { 
-            $conditions = array($model->name . '.' . $foreignKey => $foreignId); 
+            $conditions = array($model->alias . '.' . $foreignKey => $foreignId); 
             if (array_key_exists('conditions', $aggregate)) { 
                 $conditions = am($conditions, $aggregate['conditions']); 
             } else { 
@@ -76,7 +76,7 @@ class AggregateCacheBehavior extends ModelBehavior {
                         'fields' => $calculations, 
                         'conditions' => $conditions, 
                         'recursive' => $recursive, 
-                        'group' => $model->name . '.' . $foreignKey, 
+                        'group' => $model->alias . '.' . $foreignKey, 
                     )); 
             $newValues = array(); 
             foreach ($aggregate as $function => $cacheField) { 
@@ -105,7 +105,7 @@ class AggregateCacheBehavior extends ModelBehavior {
                 continue; 
             } 
             $foreignKey = $model->belongsTo[$aggregate['model']]['foreignKey'];
-            $foreignId = $model->data[$model->name][$foreignKey]; 
+            $foreignId = $model->data[$model->alias][$foreignKey]; 
             $this->__updateCache($model, $aggregate, $foreignKey, $foreignId); 
         } 
     } 
