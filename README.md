@@ -110,9 +110,18 @@ class Comment extends AppModel {
      
     var $actsAs = array( 
         'AggregateCache'=>array( 
-            'created'=>array('model'=>'Post', 'max'=>'latest_comment_date'), 
-            array('field'=>'rating', 'model'=>'Post', 'avg'=>'average_rating', 'max'=>'best_rating',  
-                'conditions'=>array('visible'=>'1'), 'recursive'=>-1), 
+            'created'=>array(		#Syntax OPT1 - 'created' is the name of the name of the field we want to trigger by
+                 'model'=>'Post',	# Post is the model we want to update with the new details
+                 'max'=>'latest_comment_date' # 'Post.latest_comment_date' is the field we'll update with the 'max' function (based on 'Comment.created' as indicated above)
+            ),
+            array(
+                 'field'=>'rating',	#Syntax OPT2 - this is more explicit and easy to read
+                 'model'=>'Post', 	#The Model which holds the cache keys
+                 'avg'=>'average_rating', # Post.average_rating will be set to the 'avg' of 'Comment.rating'
+                 'max'=>'best_rating',	  # Post.best_rating will be set to the 'max' of 'Comment.rating'	
+                 'conditions'=>array('visible'=>'1'), # only look at Comments where Comment.visible = 1
+                 'recursive'=>-1	# don't need related model info
+           ), 
     )); 
      
     var $validate = array( 
