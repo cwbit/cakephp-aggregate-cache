@@ -50,7 +50,7 @@ class AggregateCacheBehavior extends ModelBehavior {
                 $aggregate['field'] = $k; 
             } 
             if (!empty($aggregate['field']) && !empty($aggregate['model'])) { 
-                $this->config[] = $aggregate; 
+                $this->config[$model->alias][] = $aggregate; 
             } 
         } 
     } 
@@ -100,7 +100,7 @@ class AggregateCacheBehavior extends ModelBehavior {
         if(array_diff_key($model->schema(),$model->data[$model->alias]) !== []):
             $model->read();
         endif;
-        foreach ($this->config as $aggregate) { 
+        foreach ($this->config[$model->alias] as $aggregate) { 
             if (!array_key_exists($aggregate['model'], $model->belongsTo)) { 
                 continue; 
             } 
@@ -118,7 +118,7 @@ class AggregateCacheBehavior extends ModelBehavior {
     } 
 
     public function afterDelete(Model $model) { 
-        foreach ($this->config as $aggregate) { 
+        foreach ($this->config[$model->alias] as $aggregate) { 
             if (!array_key_exists($aggregate['model'], $model->belongsTo)) { 
                 continue; 
             } 
