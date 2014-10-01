@@ -92,7 +92,15 @@ class AggregateCacheBehavior extends ModelBehavior {
             $assocModel->id = $foreignId; 
             $assocModel->save($newValues, false, array_keys($newValues)); 
         } 
-    } 
+    }
+    
+    public function beforeSave(Model $model, $options = array()) {
+        # Get the current foreignId in case it is different afterSave
+        foreach ($model->belongsTo as $assocKey => $assocData) { 
+            $this->foreignTableIDs[$assocData['className']] = $model->field($assocData['foreignKey']); 
+        }         
+        return true;
+    }    
 
     public function afterSave(Model $model, $created, $options = []) {
         # broad check to make sure $model->data has all the fields
@@ -107,6 +115,10 @@ class AggregateCacheBehavior extends ModelBehavior {
             $foreignKey = $model->belongsTo[$aggregate['model']]['foreignKey'];
             $foreignId = $model->data[$model->alias][$foreignKey]; 
             $this->__updateCache($model, $aggregate, $foreignKey, $foreignId); 
+            $oldForeignId = $this->foreignTableIDs[$aggregate['model']];
+            if( !$created && $foreignId != $oldForeignId ) {
+                $this->__updateCache($model, $aggregate, $foreignKey, $oldForeignId);
+            }            
         } 
     } 
 
