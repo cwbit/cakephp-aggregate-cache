@@ -40,11 +40,11 @@
  */ 
 class AggregateCacheBehavior extends ModelBehavior { 
 
-    public $foreignTableIDs = []; 
-    public $config = []; 
-    public $functions = ['min', 'max', 'avg', 'sum', 'count']; 
+    public $foreignTableIDs = array(); 
+    public $config = array(); 
+    public $functions = array('min', 'max', 'avg', 'sum', 'count'); 
 
-    public function setup(Model $model, $config = []) { 
+    public function setup(Model $model, $config = array()) { 
         foreach ($config as $k => $aggregate) { 
             if (empty($aggregate['field'])) { 
                 $aggregate['field'] = $k; 
@@ -94,10 +94,10 @@ class AggregateCacheBehavior extends ModelBehavior {
         } 
     } 
 
-    public function afterSave(Model $model, $created, $options = []) {
+    public function afterSave(Model $model, $created, $options = array()) {
         # broad check to make sure $model->data has all the fields
         # aggregation doesn't work if the foreignKey isn't in $model->data
-        if(array_diff_key($model->schema(),$model->data[$model->alias]) !== []):
+        if(array_diff_key($model->schema(),$model->data[$model->alias]) !== array()):
             $model->read();
         endif;
         foreach ($this->config[$model->alias] as $aggregate) { 
