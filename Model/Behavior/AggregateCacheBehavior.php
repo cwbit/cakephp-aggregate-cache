@@ -90,7 +90,9 @@ class AggregateCacheBehavior extends ModelBehavior {
                 }
             } 
             $assocModel->id = $foreignId; 
-            $assocModel->save($newValues, false, array_keys($newValues)); 
+            if ($assocModel->exists()) {
+                $assocModel->save($newValues, false, array_keys($newValues)); 
+            }
         } 
     } 
 
